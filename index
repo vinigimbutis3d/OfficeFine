@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hotel Fineline – Escritório Virtual</title>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0e1a26;--pn:#1c2733;--ink:#dbe8f2;--ln:#061420;--mut:#9bb0c1;--hd:#2c5f8a;--ok:#2f9e4f;box-sizing:border-box}
+*{box-sizing:border-box}
+body{margin:0 auto;max-width:800px;background:var(--bg);color:var(--ink);font:14px/1.35 "Pixelify Sans","Courier New",monospace;padding:10px;background-image:radial-gradient(#16293b 1px,transparent 1px);background-size:14px 14px}
+
+.habbo-top{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(#2a6b92,#1a425c);border:3px solid var(--ln);border-radius:8px;padding:8px 12px;margin-bottom:8px;box-shadow:0 4px 0 var(--ln)}
+.habbo-top .logo{font-weight:700;font-size:20px;letter-spacing:1px;color:#ffd24a;text-shadow:2px 2px 0 #000}
+.habbo-top .user-info{display:flex;align-items:center;gap:8px;background:#0a121b;padding:4px 8px;border-radius:20px;border:2px solid #3a6f93}
+.habbo-top .coins{color:#ffd24a;font-weight:bold;font-size:13px}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.ch{display:inline-flex;align-items:center;gap:6px;background:#0a121b;border:2px solid #2a4a63;border-radius:12px;padding:2px 10px;font-size:13px;color:#fff}
+.ch i{width:10px;height:10px;border:1px solid #000;display:inline-block}
+
+.cvw{position:relative;border:3px solid var(--ln);border-radius:10px;box-shadow:0 0 0 2px #3a6f93,0 6px 0 var(--ln);overflow:hidden;margin-bottom:12px;background:#05090d}
+canvas{width:100%;height:auto;image-rendering:pixelated;touch-action:manipulation;cursor:pointer;display:block;}
+.rn{position:absolute;left:8px;top:8px;background:rgba(8,18,28,.85);border:2px solid #3a6f93;border-radius:6px;padding:3px 10px;color:#fff;line-height:1.15;pointer-events:none}
+.rn b{display:block;font-size:15px}
+.rn small{font-size:11px;color:#9fc0d6}
+.hint{position:absolute;left:8px;right:8px;bottom:5px;font-size:11px;line-height:1.2;color:#9fc0d6;pointer-events:none;text-shadow:0 1px 0 #000}
+
+#prox-prompt{position:absolute;left:50%;bottom:30px;transform:translateX(-50%);background:rgba(0,0,0,.85);border:2px solid #ffd24a;border-radius:8px;padding:6px 12px;color:#fff;font-weight:bold;display:none;align-items:center;gap:8px;z-index:5;cursor:pointer;box-shadow:0 4px 0 #000;animation:bounce 1s infinite alternate}
+@keyframes bounce{from{transform:translateX(-50%) translateY(0)}to{transform:translateX(-50%) translateY(-4px)}}
+#prox-prompt span{background:#ffd24a;color:#000;padding:2px 6px;border-radius:4px;font-size:12px}
+
+.dock{display:flex;gap:4px;background:#0a121b;border:2px solid #2a4a63;border-radius:12px;padding:6px;margin-bottom:12px;box-shadow:0 4px 0 var(--ln)}
+.dock button{flex:1;background:none;border:0;color:#cfe3f1;font:inherit;font-size:11px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;min-height:50px}
+.dock i{width:30px;height:30px;border:2px solid #000;border-radius:7px;box-shadow:inset 0 3px 0 rgba(255,255,255,.35),inset 0 -3px 0 rgba(0,0,0,.25);display:grid;place-items:center;font-style:normal;font-weight:700;color:#fff}
+.dock .plus{background:#3fbf63}
+
+.pn{color:var(--ink);border:2px solid var(--ln);border-radius:8px;box-shadow:0 0 0 2px #3a6f93,0 4px 0 var(--ln);margin-bottom:12px;background:#1c2733}
+.pn>h2{background:linear-gradient(#4aa0cb,#2a6b92);border-bottom:2px solid var(--ln);font-size:15px;letter-spacing:.5px;text-shadow:0 1px 0 #000;margin:0;padding:6px 10px;color:#fff}
+.pn>div{padding:10px}
+
+.ag{display:flex;gap:10px;align-items:center}
+#pf{width:60px;height:66px;image-rendering:pixelated;border:2px solid var(--ln);border-radius:6px;flex:none;background:#0b1118}
+.rl{color:#6cc0ff;font-weight:700}
+.m{color:var(--mut);font-size:13px}
+#log{background:#0a1620;color:#e8eff6;border:2px solid #1b3a52;border-radius:6px;padding:6px;max-height:150px;overflow:auto;font-size:13px}
+#log p{margin:2px 0}
+.go,.sm{border-radius:7px;border:2px solid var(--ln);box-shadow:inset 0 2px 0 rgba(255,255,255,.35),0 2px 0 var(--ln);font:inherit;font-weight:700;padding:6px 10px;cursor:pointer}
+.go{background:linear-gradient(#6cc0ff,#2a8fd6);color:#fff}
+.sm{background:linear-gradient(#e8edf2,#b8c2cc);color:#061420;font-size:13px;padding:4px 8px}
+input,select,textarea{font:inherit;font-size:16px;padding:6px;border:2px solid var(--ln);background:var(--pn);color:var(--ink);border-radius:6px;flex:1 1 120px;min-width:0}
+form{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.row{display:flex;gap:8px;align-items:center;margin:5px 0}
+.row span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar{width:70px;height:10px;border:2px solid var(--ln);display:block;background:#000}
+.bar u{display:block;height:100%;background:var(--ok)}
+ul{list-style:none;margin:0;padding:0}
+li{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:5px 0;border-top:2px dashed #3a6f93}
+
+#cc{position:fixed;inset:0;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;padding:12px;z-index:9;overflow:auto}
+#cc[hidden]{display:none}
+#cc .pn{width:100%;max-width:500px;margin:0}
+.chat{height:280px;overflow:auto;border:2px solid var(--ln);padding:8px;margin-bottom:8px;white-space:pre-wrap;font-size:14px;background:#0a1620;border-radius:6px}
+.chat p{margin:0 0 8px;line-height:1.3}
+.chips{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+#pv{width:160px;height:132px;image-rendering:pixelated;border:2px solid var(--ln);display:block;margin:0 auto 8px;background:#0b1118}
+.sw{display:flex;gap:6px;align-items:center;margin:4px 0;flex-wrap:wrap}
+.sw span{width:60px;font-size:12px}
+.swb{width:28px;height:28px;border:2px solid var(--ln);border-radius:3px;cursor:pointer;padding:0}
+.swb.on{outline:3px solid #ffd24a}
+
+#tt{position:fixed;left:10px;right:10px;top:10px;z-index:12;background:#2f9e4f;color:#fff;border:2px solid var(--ln);border-radius:6px;padding:8px;display:flex;gap:8px;align-items:center;justify-content:space-between;box-shadow:0 4px 0 var(--ln)}
+#tt[hidden]{display:none}
+</style>
+</head>
+<body>
+
+<header class="habbo-top">
+  <div class="logo">HOTEL FINELINE</div>
+  <div class="user-info">
+    <!-- BOTÃO USANDO PROMPT NATIVO -->
+    <button type="button" class="go" onclick="configurarAPI()" style="font-size:11px; padding:4px 8px;">CONFIGURAR API</button>
+    <button type="button" class="sm" onclick="exportSave()" title="Baixar progresso" style="font-size:12px;padding:2px 6px;">💾</button>
+    <button type="button" class="sm" onclick="document.getElementById('import-file').click()" title="Carregar progresso" style="font-size:12px;padding:2px 6px;">📂</button>
+    <input type="file" id="import-file" style="display:none" accept=".json" onchange="importSave(event)">
+    <div style="width:24px;height:24px;background:#ffd24a;border:2px solid #000;border-radius:4px;"></div>
+    <span id="ui-name">Chefe</span>
+  </div>
+</header>
+
+<div class="chips" id="chips"></div>
+
+<div class="cvw">
+  <canvas id="cv" width="270" height="215"></canvas>
+  <div class="rn" id="tabs"></div>
+  <div class="hint">Toque no piso para andar · piso amarelo = porta</div>
+  <div id="prox-prompt" onclick="triggerProximity()"><span>X</span> Interagir</div>
+</div>
+
+<nav class="dock" aria-label="Atalhos">
+  <button data-chat="1"><i style="background:#e8a21c"></i><span>Printer Boy</span></button>
+  <button data-crm="1"><i style="background:#e0527a"></i><span>Cris</span></button>
+  <button data-dado="1"><i style="background:#2fa7a0"></i><span>Dado</span></button>
+  <button data-iris="1"><i style="background:#ffd24a"></i><span>Iris</span></button>
+  <button data-scout="1"><i style="background:#ff5a5a"></i><span>Scout</span></button>
+</nav>
+
+<div id="cc" hidden></div>
+<div id="tt" hidden></div>
+
+<div class="pn"><h2>Perfil do Chefe</h2><div id="info"></div></div>
+<div class="pn"><h2>Chatlog Geral</h2><div id="log"></div></div>
+<div id="panel"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const cv=$('#cv');
+let x=cv.getContext('2d');
+const W=270,H=215,OX=135,OY=72,OL='rgba(0,0,0,.55)';
+
+const P=(c,r,z=0)=>[OX+(c-r)*16,OY+(c+r)*8-z];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function poly(a,f,s){x.beginPath();a.forEach((p,i)=>i?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1]));x.closePath();if(f){x.fillStyle=f;x.fill()}if(s){x.strokeStyle=s;x.lineWidth=1;x.stroke()}}
+function B(c,r,w,h,z,t,col){const T=z+t,L=[P(c,r+h,T),P(c+w,r+h,T),P(c+w,r+h,z),P(c,r+h,z)],R=[P(c+w,r,T),P(c+w,r+h,T),P(c+w,r+h,z),P(c+w,r,z)],U=[P(c,r,T),P(c+w,r,T),P(c+w,r+h,T),P(c,r+h,T)];
+ poly(L,col);poly(L,'rgba(0,0,0,.2)',OL);poly(R,col);poly(R,'rgba(0,0,0,.4)',OL);poly(U,col,OL)}
+const wR=(a,b,z0,z1,col)=>poly([P(a,0,z0),P(b,0,z0),P(b,0,z1),P(a,0,z1)],col,OL);
+const wL=(a,b,z0,z1,col)=>poly([P(0,a,z0),P(0,b,z0),P(0,b,z1),P(0,a,z1)],col,OL);
+
+const S={jobs:[],printers:[null,null,null],done:[],leads:[],crew:[],me:null,chat:[],crisChat:[],irisChat:[],scoutChat:[],dadoChat:[],biz:{}};
+try{const v=localStorage.getItem('hotel-fineline');if(v)Object.assign(S,JSON.parse(v))}catch(e){}
+
+const save=()=>{ try{ localStorage.setItem('hotel-fineline',JSON.stringify(S)) }catch(e){} };
+
+function exportSave() {
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(S));
+  const dlAnchorElem = document.createElement('a');
+  dlAnchorElem.setAttribute("href", dataStr);
+  dlAnchorElem.setAttribute("download", "fineline_save.json");
+  dlAnchorElem.click();
+  toast('Progresso baixado!');
+}
+function importSave(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const loaded = JSON.parse(e.target.result);
+      Object.assign(S, loaded);
+      save();
+      location.reload();
+    } catch(err) {
+      toast('⚠️ Arquivo inválido.');
+    }
+  };
+  reader.readAsText(file);
+}
+window.addEventListener('beforeunload', save);
+setInterval(save, 10000);
+
+S.printers.forEach((j,i)=>{if(j&&!j.end){S.jobs.unshift(j);S.printers[i]=null}});
+const PRN=['K1 Max','A1 Combo','Ender 3 V3'],busy=()=>S.printers.filter(Boolean).length,ST=['Novo','Em contato','Fechado'];
+let rm='of',sel='printo',cur=null,last=0;const LOG=[];
+
+const RM={
+ of:{n:'Oficina 3D',M:8,N:7,doors:[{c:0,r:3,to:'es',at:[1.5,3.5]}],wl:'#5a4332',wr:'#6f533c',f:['#8b8d96','#9a9ca6'],rug:[3,5,2,3],rc:['#b5533c','#c4624a'],
+  deco(){wR(5.2,6.8,22,46,'#8fd0ff');wR(1,3.9,26,48,'#1b2430');for(let i=0;i<Math.min(S.jobs.length,5);i++)wR(1.2+i*.5,1.55+i*.5,30,36,['#e8a21c','#e0527a','#2a8fd6','#3fbf63','#b07aff'][i])},
+  furn(){const f=[];[0,1,2].forEach(i=>{const j=S.printers[i],c=1+2*i;f.push({c,r:0,w:1,h:1,fn:()=>{B(c,0,1,1,0,10,'#4a5360');B(c+.1,.1,.8,.8,10,12,j?'#3fbf63':'#b8c2cc');B(c+.35,.9,.3,.05,15,3,j?'#7dff9a':'#ff5a5a');if(j){const t=(performance.now()/400)%2,o=t<1?t:2-t;B(c+.15+o*.5,.3,.25,.3,22,4,'#ffd24a')}x.font='7px "Pixelify Sans",monospace';x.textAlign='center';x.fillStyle='#fff';const q=P(c+.5,.5,28);x.fillText(['K1 Max','A1 Combo','Ender 3'][i],q[0],q[1])}})});
+   f.push({c:2,r:4,w:2,h:1,fn:()=>{B(2,4,2,1,0,12,'#8a5a32');B(2.3,4.2,.5,.5,12,5,'#e8a21c');B(3.2,4.3,.5,.4,12,4,'#2a8fd6')}});
+   f.push({c:7,r:1,w:1,h:2,fn:()=>{B(7,1,.6,2,0,34,'#6d4a2b');['#e8a21c','#e0527a','#2a8fd6'].forEach((k,i)=>B(7.05,1.1+i*.6,.5,.45,34,7,k))}});
+   f.push({c:6,r:4,w:1,h:1,fn:()=>{B(6,4,1,1,0,16,'#2d3a48');B(6.1,4.1,.8,.3,16,8,'#6ec6ff')}});
+   f.push({c:0,r:0,w:1,h:1,fn:()=>{B(0.2,.2,.6,.6,0,8,'#8a5a32');B(0.1,.1,.8,.8,8,12,'#2f9e4f')}});
+   return f}},
+ es:{n:'Escritório',M:8,N:7,doors:[{c:0,r:3,to:'of',at:[1.5,3.5]},{c:4,r:0,to:'mk',at:[1.5,3.5]}],wl:'#2d4a6e',wr:'#3d6593',f:['#5f86b3','#6b92bf'],
+  deco(){wR(1,2.6,22,46,'#8fd0ff');wR(5,6.6,22,46,'#8fd0ff');wR(4,5,0,40,'#2a1b12');wR(4.1,4.9,0,38,'#4a3322');wL(5,6.6,22,44,'#f2f5f8');wL(5.2,5.6,26,34,'#2a8fd6');wL(5.8,6.2,26,40,'#e8a21c')},
+  furn(){const f=[];[[2,1],[5,1],[2,4],[5,4]].forEach(([c,r])=>f.push({c,r,w:2,h:1,fn:()=>{B(c,r,2,1,0,12,'#e8edf2');B(c+.7,r+.3,.6,.4,12,9,'#1b232c');B(c+.7,r+1.2,.6,.6,0,9,'#2b3340')}}));
+   f.push({c:0,r:5,w:1,h:1,fn:()=>{B(0,5,1,1,0,24,'#2d3a48');B(.2,5.95,.6,.05,16,3,'#3fbf63')}});
+   f.push({c:7,r:0,w:1,h:1,fn:()=>{B(7.2,.2,.6,.6,0,8,'#8a5a32');B(7.1,.1,.8,.8,8,12,'#2f9e4f')}});
+   return f}},
+ mk:{n:'Marketing',M:6,N:6,doors:[{c:0,r:3,to:'es',at:[4.5,1.5]}],wl:'#5b3f85',wr:'#6f50a0',f:['#a9a9bd','#b6b6c9'],
+  deco(){wR(2,4,22,44,'#e8c21c');wL(1.5,3.5,22,44,'#e8c21c')},
+  furn(){return[
+   {c:2,r:2,w:1,h:1,fn:()=>B(2,2,1,1,0,14,'#c58a3a')},
+   {c:3,r:2,w:1,h:1,fn:()=>B(3.1,2.1,.8,.8,0,10,'#b07a30')},
+   {c:4,r:4,w:1,h:1,fn:()=>B(4,4,1,1,0,14,'#c58a3a')},
+   {c:5,r:1,w:1,h:1,fn:()=>B(5.3,1.3,.4,.4,0,10,'#ef6a2c')}
+  ]}}};
+
+const mk=(id,n,role,room,c,r,s,k,h,st,d)=>({id,n,role,room,c,r,path:[],say:null,look:{k,h,s,p:'#2b3340'},st,d});
+const ents=[
+ mk('printo','Printer Boy','Operador de impressão','of',4.5,2.5,'#e8a21c','#f1c9a0','#4a2f1b',()=>busy()?`imprimindo ${busy()}`:'aguardando','Especialista em K1 Max, A1 Combo e Ender 3 V3.'),
+ mk('cris','Cris','Head de Performance & CRM','es',1.5,3.5,'#e0527a','#f1c9a0','#8a3b12',()=>`${S.leads.filter(l=>l.stage==0).length} leads novos`,'Google Ads, CRM e Google Workspace.'),
+ mk('dado','Dado','Sistema Interno (ERP)','es',4.5,3.5,'#2fa7a0','#c68b5e','#222',()=>`Monitorando dados`,'Cruza pedidos, estoque e vendas.'),
+ mk('iris','Iris','Chief Growth Officer','mk',2.5,2.5,'#ffd24a','#e8b4a8','#1a1a1a',()=>'pensando','Estrategista CEO.'),
+ mk('scout','Scout','Pesquisador de Mercado','mk',4.5,4.5,'#f2f5f8','#e8b4a8','#1a1a1a',()=>'pesquisando','Analisa tendências e nichos.'),
+ mk('boss','Você','CEO','*',.5,3.5,'#2a8fd6','#e0b48a','#222',()=>'no comando','Toque no piso para andar.')];
+
+const boss=ents.find(e=>e.id==='boss'),vis=()=>ents.filter(e=>e.room===rm||e.room==='*');
+const blk=()=>{const s=new Set();RM[rm].furn().forEach(f=>{for(let i=0;i<f.w;i++)for(let j=0;j<f.h;j++)s.add((f.c+i)+','+(f.r+j))});return s};
+
+function bfs(a,b,bl,M,N){const k=(c,r)=>c+','+r,q=[a],pv={[k(a[0],a[1])]:null};
+ while(q.length){const [c,r]=q.shift();if(c==b[0]&&r==b[1])break;
+  for(const [dc,dr] of [[1,0],[-1,0],[0,1],[0,-1]]){const nc=c+dc,nr=r+dr,kk=k(nc,nr);if(nc<0||nr<0||nc>=M||nr>=N||bl.has(kk)||kk in pv)continue;pv[kk]=[c,r];q.push([nc,nr])}}
+ if(!(k(b[0],b[1]) in pv))return[];const p=[];let u=b;while(u&&!(u[0]==a[0]&&u[1]==a[1])){p.unshift(u);u=pv[k(u[0],u[1])]}return p}
+
+const goto=(e,c,r)=>{const R=RM[rm],bl=blk();if(bl.has(c+','+r))return;e.path=bfs([Math.floor(e.c),Math.floor(e.r)],[c,r],bl,R.M,R.N)};
+const rc=(a,b,w,h,c)=>{x.fillStyle=c;x.fillRect(Math.round(a),Math.round(b),w,h)};
+
+function drawE(e,tm){const [px,py]=P(e.c,e.r),L=e.look,mv=e.path.length,fr=Math.floor(tm/160)%2,y0=py-(mv&&fr?1:0),wk=e.work&&!mv;
+ if(sel===e.id)poly([P(Math.floor(e.c),Math.floor(e.r)),P(Math.floor(e.c)+1,Math.floor(e.r)),P(Math.floor(e.c)+1,Math.floor(e.r)+1),P(Math.floor(e.c),Math.floor(e.r)+1)],'rgba(255,214,70,.4)','#ffd24a');
+ x.fillStyle='rgba(0,0,0,.28)';x.beginPath();x.ellipse(px,py,6,2.6,0,0,7);x.fill();
+ rc(px-3,y0-7,2,7-(mv&&fr?2:0),L.p);rc(px+1,y0-7,2,7-(mv&&!fr?2:0),L.p);
+ rc(px-7,y0-16,14,10,'#1b1b1b');rc(px-4,y0-24,8,10,'#1b1b1b');
+ rc(px-4,y0-15,8,8,L.s);{const a1=wk?(fr?-5:-3):0,a2=wk?(fr?-3:-5):0;rc(px-6,y0-14+a1,2,6,L.s);rc(px+4,y0-14+a2,2,6,L.s);rc(px-6,y0-8+a1,2,2,L.k);rc(px+4,y0-8+a2,2,2,L.k);if(wk&&fr)rc(px+7,y0-22,2,2,'#ffd24a')}
+ rc(px-3,y0-22,6,7,L.k);rc(px-3,y0-23,6,3,L.h);rc(px-4,y0-22,1,4,L.h);rc(px+3,y0-22,1,4,L.h);rc(px-2,y0-19,1,1,'#222');rc(px+1,y0-19,1,1,'#222');
+ 
+ if(e.id==='scout') { rc(px-4,y0-19,3,1,'#fff'); rc(px+1,y0-19,3,1,'#fff'); }
+ if(e.id==='dado') { rc(px-4,y0-19,8,1,'#00ffff'); rc(px-6,y0-22,2,4,'#2fa7a0'); rc(px+5,y0-22,2,4,'#2fa7a0'); }
+
+ x.font='8px "Pixelify Sans",monospace';x.textAlign='center';const rl=e.role||'',w1=x.measureText(e.n).width;x.font='6px "Pixelify Sans",monospace';const w=Math.max(w1,x.measureText(rl).width)+6;
+ rc(px-w/2,y0-43,w,18,'rgba(10,15,20,.85)');x.font='8px "Pixelify Sans",monospace';x.fillStyle='#fff';x.fillText(e.n,px,y0-35);x.font='6px "Pixelify Sans",monospace';x.fillStyle='#ffd24a';x.fillText(rl,px,y0-28);
+ if(e.say&&tm<e.say.until){x.font='8px "Pixelify Sans",monospace';const t=e.say.txt.length>40?e.say.txt.slice(0,39)+'…':e.say.txt,bw=x.measureText(t).width+8,bx=Math.max(2,Math.min(W-2-bw,px-bw/2));
+  rc(bx-1,y0-58,bw+2,14,'#1b1b1b');rc(bx,y0-57,bw,12,'#fff');rc(px-1,y0-45,3,2,'#fff');x.fillStyle='#14212d';x.textAlign='left';x.fillText(t,bx+4,y0-48)}
+}
+
+function drawRoom(tm){const R=RM[rm],M=R.M,N=R.N,WH=54;
+ {const gr=x.createLinearGradient(0,0,0,H);gr.addColorStop(0,'#0d2236');gr.addColorStop(1,'#050d16');x.fillStyle=gr;x.fillRect(0,0,W,H)}
+ poly([P(0,0),P(0,N),P(0,N,WH),P(0,0,WH)],R.wl,OL);poly([P(0,0),P(M,0),P(M,0,WH),P(0,0,WH)],R.wr,OL);
+ poly([P(0,0,WH),P(0,N,WH),P(0,N,WH+3),P(0,0,WH+3)],'#d6dee6',OL);poly([P(0,0,WH),P(M,0,WH),P(M,0,WH+3),P(0,0,WH+3)],'#e6edf3',OL);
+ poly([P(0,0),P(0,N),P(0,N,4),P(0,0,4)],'rgba(0,0,0,.28)');poly([P(0,0),P(M,0),P(M,0,4),P(0,0,4)],'rgba(0,0,0,.2)');
+ wL(3,4.3,0,40,'#2a1b12');wL(3.1,4.2,0,38,'#4a3322');rc(...P(0,4.0,18).map(Math.round),2,2,'#ffd24a');
+ R.deco();R.doors.forEach(q=>{const p=q.c===0?P(0,3.6,46):P(4.5,0,46);x.font='6px "Pixelify Sans",monospace';x.textAlign='center';x.fillStyle='#ffd24a';x.fillText(RM[q.to].n,p[0],p[1])});
+ x.strokeStyle='rgba(255,255,255,0.05)';x.lineWidth=1;
+ for(let c=0;c<=M;c++){poly([P(c,0),P(c,N)],null,'rgba(255,255,255,0.1)')}
+ for(let r=0;r<=N;r++){poly([P(0,r),P(M,r)],null,'rgba(255,255,255,0.1)')}
+ for(let c=0;c<M;c++)for(let r=0;r<N;r++){const g=R.rug&&c>=R.rug[0]&&c<=R.rug[1]&&r>=R.rug[2]&&r<=R.rug[3];poly([P(c,r),P(c+1,r),P(c+1,r+1),P(c,r+1)],g?R.rc[(c+r)%2]:R.f[(c+r)%2],'rgba(0,0,0,.2)')}
+ poly([P(0,N),P(M,N),P(M,N,-6),P(0,N,-6)],'#2a3140',OL);poly([P(M,0),P(M,N),P(M,N,-6),P(M,0,-6)],'#1c222d',OL);
+ R.doors.forEach(q=>poly([P(q.c,q.r),P(q.c+1,q.r),P(q.c+1,q.r+1),P(q.c,q.r+1)],'rgba(255,214,70,.3)','#ffd24a'));if(cur&&tm<cur.until)poly([P(cur.c,cur.r),P(cur.c+1,cur.r),P(cur.c+1,cur.r+1),P(cur.c,cur.r+1)],'rgba(255,255,255,.35)','#fff');
+ const bgItems=R.furn().map(f=>({d:f.c+f.r+(f.w+f.h)/2,fn:f.fn}));
+ vis().forEach(e=>bgItems.push({d:e.c+e.r,fn:()=>drawE(e,tm)}));
+ bgItems.sort((a,b)=>a.d-b.d).forEach(i=>i.fn());}
+
+let fade=0;
+function frame(ts){const dt=Math.min(.05,(ts-last)/1000);last=ts;
+ vis().forEach(e=>{if(!e.path.length)return;const [tc,tr]=e.path[0],dx=tc+.5-e.c,dy=tr+.5-e.r,d=Math.hypot(dx,dy),s=3.0*dt;if(d<=s){e.c=tc+.5;e.r=tr+.5;e.path.shift();if(e===boss&&!e.path.length){const dr=RM[rm].doors.find(q=>q.c===tc&&q.r===tr);if(dr)enter(dr.to,dr.at)}}else{e.c+=dx/d*s;e.r+=dy/d*s}});
+ drawRoom(ts);checkProximity();
+ if(fade>0){x.fillStyle=`rgba(0,0,0,${fade})`;x.fillRect(0,0,W,H);fade=Math.max(0,fade-dt*3)}requestAnimationFrame(frame)}
+
+let proxTarget=null;
+function checkProximity(){const prompt=$('#prox-prompt');if(!prompt)return;proxTarget=null;
+ for(const e of vis()){if(e.id==='boss')continue;const d=Math.hypot(boss.c-e.c,boss.r-e.r);if(d<1.8){proxTarget=e;break}}
+ if(proxTarget){prompt.style.display='flex';prompt.innerHTML=`<span>X</span> Falar com ${proxTarget.n}`}else{prompt.style.display='none'}}
+function triggerProximity(){if(!proxTarget)return;if(proxTarget.id==='printo')openChat();else if(proxTarget.id==='cris')openCrisChat();else if(proxTarget.id==='dado')openDadoChat();else if(proxTarget.id==='iris')openIrisChat();else if(proxTarget.id==='scout')openScoutChat();else{sel=proxTarget.id;info();}}
+
+cv.addEventListener('pointerdown',ev=>{const b=cv.getBoundingClientRect(),px=(ev.clientX-b.left)*W/b.width,py=(ev.clientY-b.top)*H/b.height;
+ const dx=(px-OX)/16,dy=(py-OY)/8,c=Math.floor((dy+dx)/2),r=Math.floor((dy-dx)/2),R=RM[rm];
+ if(c<0||r<0||c>=R.M||r>=R.N)return;cur={c,r,until:performance.now()+700};goto(boss,c,r)});
+
+setInterval(()=>vis().forEach(e=>{if(e.id==='printo'){const bs=S.printers.map((j,i)=>j?i:-1).filter(i=>i>=0);e.work=false;if(bs.length){const i=bs[Math.floor(Date.now()/9000)%bs.length],c=1+2*i;if(Math.floor(e.c)===c&&Math.floor(e.r)===1)e.work=!e.path.length;else if(!e.path.length)goto(e,c,1);return}}if(e!==boss&&!e.path.length&&Math.random()<.12){const R=RM[rm];goto(e,Math.floor(Math.random()*R.M),Math.floor(Math.random()*R.N))}}),1000);
+
+function say(id,txt){const e=ents.find(e=>e.id===id);if(!e)return;e.say={txt,until:performance.now()+5000};LOG.push(`<p><b style="color:${e.look.s}">${e.n}:</b> ${esc(txt)}</p>`);if(LOG.length>30)LOG.shift();const l=$('#log');l.innerHTML=LOG.slice(-8).join('');l.scrollTop=1e5}
+function info(){const e=ents.find(e=>e.id===sel)||boss,h=`<div class="ag"><canvas id="pf" width="40" height="44"></canvas><div><b>${e.n}</b><div class="rl">${e.role}</div><div class="m">Agora: ${e.st()}</div></div></div><div class="m" style="margin-top:6px">${e.d}</div>`;if(info.h!==h){info.h=h;$('#info').innerHTML=h;portrait(e)}}
+function tabs(){$('#tabs').innerHTML='<b>'+RM[rm].n+'</b><small>Hotel Fineline</small>'}
+function enter(to,at){rm=to;boss.c=at[0];boss.r=at[1];boss.path=[];cur=null;sel=(ents.find(a=>a.room===rm)||boss).id;fade=1;tabs();pst();fillBiz();dyn();info()}
+
+function pst(){const p=$('#panel');
+ if(rm==='of')p.innerHTML=`<div class="pn"><h2>Impressoras</h2><div><div id="prs"></div><div class="m">Tempo real. Toque em Iniciar quando começar a imprimir na máquina.</div></div></div><div class="pn"><h2>Fila de impressão</h2><div><form id="fj" onsubmit="event.preventDefault(); addJob();"><input type="text" id="jn" placeholder="Nome da peça"><input type="number" id="jh" min="0.1" step="0.1" placeholder="Horas"><input type="number" id="jg" min="1" step="1" placeholder="Peso (g)"><select id="jp">${PRN.map((p,i)=>`<option value="${i}">${p}</option>`).join('')}</select><button type="button" class="go" onclick="addJob()">Adicionar</button></form><ul id="q"></ul></div></div>`;
+ else if(rm==='es')p.innerHTML=`<div class="pn"><h2>CRM</h2><div><form id="fl" onsubmit="event.preventDefault(); addLead();"><input type="text" id="ln" placeholder="Nome do lead"><button type="button" class="go" onclick="addLead()">Adicionar</button></form><div id="kb"></div></div></div><div class="pn"><h2>Parâmetros do negócio</h2><div><form id="fb" onsubmit="event.preventDefault(); saveBiz();"><input type="number" step="any" id="bt" placeholder="Ticket médio (R$)"><input type="number" step="any" id="bg" placeholder="Custo por grama (R$)"><input type="number" step="any" id="bo" placeholder="Anúncios/mês (R$)"><input type="number" step="any" id="bm" placeholder="Margem alvo (%)"><button type="button" class="go" onclick="saveBiz()">Salvar</button></form></div></div>`;
+ else p.innerHTML=`<div class="pn"><h2>Marketing & Inovação</h2><div class="m">Use o Scout e a Iris para descobrir novos nichos e estratégias.</div></div>`}
+
+function dyn(){if(rm==='of'){prs();$('#q').innerHTML=S.jobs.length?S.jobs.map(j=>`<li><span>${esc(j.name)} · ${PRN[j.pr]} · ${j.h} h · ${j.g} g</span><span><button class="sm" onclick="startJob('${j.id}')">Iniciar</button> <button class="sm" onclick="rmJob('${j.id}')">×</button></span></li>`).join(''):'<li class="m">Fila vazia</li>'}
+ if(rm==='es'){$('#kb').innerHTML=ST.map((s,i)=>`<div class="col"><h3>${s} (${S.leads.filter(l=>l.stage==i).length})</h3><ul>${S.leads.filter(l=>l.stage==i).map(l=>`<li><span>${esc(l.name)}</span>${i<2?`<button class="sm" onclick="advLead('${l.id}')">Avançar</button>`:''}</li>`).join('')||'<li class="m">Vazio</li>'}</ul></div>`).join('')}}
+function tick(){let ch=false;S.printers.forEach((j,i)=>{if(j&&Date.now()>=j.end){S.done.push({...j,ok:true,fin:j.end});S.printers[i]=null;ch=true;say('printo',`Peça pronta: ${j.name} (${PRN[i]}), terminou às ${hm(j.end)}`);toast(`✅ ${j.name} terminou na ${PRN[i]}`)}});
+ if(ch){save();dyn()}upd();info();stats()}
+
+function addJob(){const n=$('#jn').value.trim(),h=+$('#jh').value,m=Math.round(h*60),p=+$('#jp').value;if(!n||!h||!m)return;S.jobs.push({id:uid(),name:n,h,g:+$('#jg').value||0,pr:p,min:m,left:m,t:Date.now()});say('printo',`Novo pedido: ${n} (${PRN[p]}, ${h} h)`);save();dyn();info();}
+function addLead(){const n=$('#ln').value.trim();if(!n)return;S.leads.push({id:uid(),name:n,stage:0,t:Date.now()});say('cris','Novo lead registrado: '+n);save();dyn();info();}
+function saveBiz(){S.biz={ticket:+$('#bt').value||0,custoGrama:+$('#bg').value||0,orcAds:+$('#bo').value||0,margem:+$('#bm').value||0};say('cris','Parâmetros atualizados.');save();}
+function rmJob(id){S.jobs=S.jobs.filter(j=>j.id!=id);save();dyn();info();}
+function advLead(id){const l=S.leads.find(l=>l.id==id);if(l){l.stage++;say('cris',`${l.name} avançou para ${ST[l.stage]}`);if(l.stage==2)say('dado','Venda registrada no sistema')}save();dyn();info();}
+function startJob(id){const k=S.jobs.findIndex(j=>j.id==id);if(k<0)return;const j=S.jobs[k];if(S.printers[j.pr]){say('printo',`${PRN[j.pr]} está ocupada.`);return}
+ S.jobs.splice(k,1);j.start=Date.now();j.end=j.start+j.min*60000;S.printers[j.pr]=j;say('printo',`Iniciado: ${j.name} na ${PRN[j.pr]}.`);save();dyn();info()}
+function fillBiz(){const b=S.biz||{},f=$('#fb');if(!f||f.contains(document.activeElement))return;$('#bt').value=b.ticket||'';$('#bg').value=b.custoGrama||'';$('#bo').value=b.orcAds||'';$('#bm').value=b.margem||''}
+
+const SK=['#f1c9a0','#e0b48a','#c68b5e','#8d5a3b','#5a3a26'],HC=['#222','#4a2f1b','#8a3b12','#e8c21c','#e0527a','#2a8fd6'],SC=['#e8a21c','#e0527a','#2a8fd6','#2fa7a0','#9b59d0','#3fbf63','#e8edf2'];let d={};
+
+function applyMe(){if(!S.me)return;boss.n=S.me.n||'Chefe';boss.role=S.me.role||'CEO';boss.look={k:S.me.k||SK[0],h:S.me.h||HC[0],s:S.me.s||SC[0],p:'#1d3557'}}
+function addCrew(a){const e=mk(a.id,a.n,a.role,a.room,.5,3.5,a.s,a.k,a.h,()=>'trabalhando','Contratado.');e.crew=1;ents.push(e)}
+function swr(key,label,arr){return `<div class="sw"><span>${label}</span>${arr.map(v=>`<button type="button" class="swb${d[key]===v?' on':''}" data-sw="${key}" data-v="${v}" style="background:${v}" onclick="setSw('${key}','${v}',this)"></button>`).join('')}</div>`}
+function setSw(k,v,el){d[k]=v;[...el.parentNode.children].forEach(b=>b.classList.toggle('on',b===el));prev();}
+
+function openCC(mode){d={mode,n:'',k:SK[0],h:HC[0],s:SC[0]};const me=mode==='me';
+ $('#cc').innerHTML=`<div class="pn"><h2>${me?'Crie seu personagem':'Novo funcionário'}</h2><div><canvas id="pv" width="160" height="132"></canvas><form id="fc" onsubmit="event.preventDefault(); hire();"><input type="text" id="cn" placeholder="Nome (opcional)" maxlength="14" oninput="d.n=this.value;prev()"><input type="text" id="cr" placeholder="Cargo (opcional)" maxlength="24" oninput="d.role=this.value;prev()">${me?'':`<select id="cm"><option value="of">Oficina 3D</option><option value="es">Escritório</option><option value="mk">Marketing</option></select>`}${swr('k','Pele',SK)}${swr('h','Cabelo',HC)}${swr('s','Camisa',SC)}<button type="button" class="go" onclick="hire()">${me?'Entrar no hotel':'Contratar'}</button>${me?'':'<button type="button" class="sm" onclick="document.getElementById(\'cc\').hidden=true">Cancelar</button>'}</form></div></div>`;
+ $('#cc').hidden=false;prev();}
+
+function prev(){const c=$('#pv');if(!c)return;const g=c.getContext('2d');g.fillStyle='#0b1118';g.fillRect(0,0,160,132);const ox=x;x=g;g.save();g.scale(2,2);g.translate(-95,-44);drawE({id:'_',n:d.n||'Novo',role:d.role||'',c:1.5,r:1.5,path:[],say:null,look:{k:d.k,h:d.h,s:d.s,p:'#2b3340'}},0);g.restore();x=ox;}
+
+function hire(){const n=(d.n||'').trim()||'Chefe';const role=($('#cr')?.value||'').trim()||'CEO';
+ if(d.mode==='me'){S.me={n,role,k:d.k||SK[0],h:d.h||HC[0],s:d.s||SC[0]};applyMe();say('printo',`Bem-vindo, ${n}!`);}
+ else{const room=$('#cm')?.value||'es';const a={id:'c'+uid(),n,role,room,k:d.k||SK[0],h:d.h||HC[0],s:d.s||SC[0]};S.crew.push(a);addCrew(a);say(a.id,`Cheguei! Sou ${role}.`);}
+ save();$('#cc').hidden=true;info();}
+
+// =========================================
+// MOTOR DE INTELIGÊNCIA ARTIFICIAL (GROQ)
+// =========================================
+let aiBusy = false;
+
+// CONFIGURAÇÃO USANDO PROMPT NATIVO (À PROVA DE FALHAS)
+function configurarAPI() {
+  const atual = localStorage.getItem('groq_key') || '';
+  const chave = prompt("Cole aqui a sua API Key da Groq (começa com gsk_):", atual);
+  
+  if (chave !== null) { // Se o usuário não clicou em Cancelar
+    const k = chave.trim();
+    if (k) {
+      localStorage.setItem('groq_key', k);
+      alert("✅ IA Ativada com sucesso! A partir de agora os funcionários vão pensar de verdade.");
+    } else {
+      localStorage.removeItem('groq_key');
+      alert("⚠️ Chave apagada. O jogo voltará ao modo de simulação.");
+    }
+  }
+}
+
+async function callAI(agent, systemPrompt, messages) {
+  const key = localStorage.getItem('groq_key');
+  if (!key) {
+    return { sim: true };
+  }
+
+  try {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${key}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'llama-3.1-8b-instant',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          ...messages.map(m => ({ role: m.role, content: m.content }))
+        ],
+        temperature: 0.7,
+        max_tokens: 500
+      })
+    });
+
+    if (!res.ok) throw new Error('API Error');
+    const data = await res.json();
+    return { text: data.choices[0].message.content };
+  } catch (e) {
+    console.error(e);
+    return { error: 'Erro na API. Verifique sua chave ou tente novamente.' };
+  }
+}
+
+// =========================================
+// CHATS (INTEGRADOS COM A API)
+// =========================================
+
+let CH=S.chat||[];
+
+function drawChat(){const l=$('#cl');if(!l)return;const pb='<b style="color:#e8a21c">Printer Boy:</b> ';l.innerHTML='<p>'+pb+'Fala, chefe! O que vamos imprimir?</p>'+CH.map(m=>m.role==='user'?`<p><b>${esc(m.who||'Você')}:</b> ${esc(m.content)}</p>`:`<p>${pb}${esc(m.content)||'...'}</p>`).join('');l.scrollTop=1e5;}
+function openChat(){$('#cc').innerHTML=`<div class="pn"><h2>Printer Boy · Especialista 3D</h2><div><div class="chat" id="cl"></div><div class="chips"><button type="button" class="sm" onclick="document.getElementById('cq').value='Aderência K1 Max';ask()">Aderência K1 Max</button><button type="button" class="sm" onclick="document.getElementById('cq').value='PETG na A1';ask()">PETG na A1</button></div><form id="fq" onsubmit="event.preventDefault(); ask();"><input type="text" id="cq" placeholder="Pergunte..." autocomplete="off"><button type="button" class="go" onclick="ask()">Enviar</button></form><button type="button" class="sm" onclick="document.getElementById('cc').hidden=true">Fechar</button></div></div>`;$('#cc').hidden=false;drawChat();$('#cq').focus();}
+
+async function ask(){
+  if(aiBusy)return;const i=$('#cq');if(!i)return;const q=i.value.trim();if(!q)return;i.value='';
+  CH.push({role:'user',content:q,who:boss.n,t:Date.now()});save();drawChat();
+  
+  aiBusy=true; let tempMsg={role:'assistant',content:'...',t:Date.now(),temp:true};CH.push(tempMsg);drawChat();
+
+  const sysPrompt = `Você é o Printer Boy, especialista sênior em impressão 3D da Fineline 3D. Sua frota: K1 Max, A1 Combo (AMS) e Ender 3 V3. Responda em português, direto e técnico. Ajude com falhas, fatiadores e materiais. Status atual: ${S.printers.filter(Boolean).length}/3 máquinas ativas, ${S.jobs.length} na fila.`;
+
+  const res = await callAI('printo', sysPrompt, CH.filter(m=>!m.temp));
+
+  CH=CH.filter(m=>m!==tempMsg);
+  if (res.sim) {
+    CH.push({role:'assistant',content: mockPrinterResponse(q),t:Date.now()});
+  } else if (res.error) {
+    CH.push({role:'assistant',content: '⚠️ ' + res.error,t:Date.now()});
+  } else {
+    CH.push({role:'assistant',content: res.text,t:Date.now()});
+  }
+  save();drawChat();say('printo','Boa pergunta!');aiBusy=false;
+}
+
+// Cris
+function drawCrisChat(){const l=$('#cl2');if(!l)return;const pb='<b style="color:#e0527a">Cris:</b> ';l.innerHTML='<p>'+pb+'Oi chefe! Qual sua dúvida?</p>'+(S.crisChat||[]).map(m=>m.role==='user'?`<p><b>${esc(m.who||'Você')}:</b> ${esc(m.content)}</p>`:`<p>${pb}${esc(m.content)||'...'}</p>`).join('');l.scrollTop=1e5;}
+function openCrisChat(){$('#cc').innerHTML=`<div class="pn"><h2>Cris · Google Ads & CRM</h2><div><div class="chat" id="cl2"></div><form id="fcrm" onsubmit="event.preventDefault(); askCris();"><textarea id="ccrm" rows="3" placeholder="Pergunte..."></textarea><button type="button" class="go" onclick="askCris()">Enviar</button></form><button type="button" class="sm" onclick="document.getElementById('cc').hidden=true">Fechar</button></div></div>`;$('#cc').hidden=false;drawCrisChat();$('#ccrm').focus();}
+
+async function askCris(){
+  const i=$('#ccrm'),q=i.value.trim();if(!q||aiBusy)return;i.value='';if(!S.crisChat)S.crisChat=[];
+  S.crisChat.push({role:'user',content:q,who:boss.n,t:Date.now(),ag:'cris'});save();drawCrisChat();
+  aiBusy=true;const temp={role:'assistant',content:'...',ag:'cris',temp:true};S.crisChat.push(temp);drawCrisChat();
+
+  const sysPrompt = `Você é a Cris, Head de Performance e CRM da Fineline 3D. Especialista em Google Ads, CRM e Google Workspace. Seja direta. Dados atuais: ${S.leads.length} leads, ${S.leads.filter(l=>l.stage==2).length} vendas fechadas.`;
+  const res = await callAI('cris', sysPrompt, S.crisChat.filter(m=>!m.temp));
+
+  S.crisChat=S.crisChat.filter(m=>m!==temp);
+  if (res.sim) S.crisChat.push({role:'assistant',content:mockCrisResponse(q),ag:'cris'});
+  else if (res.error) S.crisChat.push({role:'assistant',content:'⚠️ '+res.error,ag:'cris'});
+  else S.crisChat.push({role:'assistant',content:res.text,ag:'cris'});
+  save();drawCrisChat();aiBusy=false;
+}
+
+// Dado
+function drawDadoChat(){const l=$('#cl5');if(!l)return;const pb='<b style="color:#2fa7a0">Dado:</b> ';l.innerHTML='<p>'+pb+'Sistema inicializado.</p>'+(S.dadoChat||[]).map(m=>m.role==='user'?`<p><b>${esc(m.who||'Você')}:</b> ${esc(m.content)}</p>`:`<p>${pb}${esc(m.content)||'...'}</p>`).join('');l.scrollTop=1e5;}
+function openDadoChat(){$('#cc').innerHTML=`<div class="pn"><h2>Dado · Sistema (ERP)</h2><div><div class="chat" id="cl5"></div><div class="chips"><button type="button" class="sm" onclick="document.getElementById('cdado').value='Relatório Geral';askDado()">Relatório</button><button type="button" class="sm" onclick="document.getElementById('cdado').value='Status Shopee';askDado()">Status Shopee</button></div><form id="fdado" onsubmit="event.preventDefault(); askDado();"><input type="text" id="cdado" placeholder="Pergunte..." autocomplete="off"><button type="button" class="go" onclick="askDado()">Enviar</button></form><button type="button" class="sm" onclick="document.getElementById('cc').hidden=true">Fechar</button></div></div>`;$('#cc').hidden=false;drawDadoChat();$('#cdado').focus();}
+
+async function askDado(){
+  const i=$('#cdado'),q=i.value.trim();if(!q||aiBusy)return;i.value='';if(!S.dadoChat)S.dadoChat=[];
+  S.dadoChat.push({role:'user',content:q,who:boss.n,t:Date.now(),ag:'dado'});save();drawDadoChat();
+  aiBusy=true;const temp={role:'assistant',content:'Processando...',ag:'dado',temp:true};S.dadoChat.push(temp);drawDadoChat();
+
+  const sysPrompt = `Você é o Dado, Sistema Interno (ERP) da Fineline 3D. Responda com base nos dados: ${S.done.length} peças prontas, ${S.leads.length} leads, ${S.jobs.length} na fila, ${S.printers.filter(Boolean).length}/3 máquinas ativas.`;
+  const res = await callAI('dado', sysPrompt, S.dadoChat.filter(m=>!m.temp));
+
+  S.dadoChat=S.dadoChat.filter(m=>m!==temp);
+  if (res.sim) S.dadoChat.push({role:'assistant',content:mockDadoResponse(q),ag:'dado'});
+  else if (res.error) S.dadoChat.push({role:'assistant',content:'⚠️ '+res.error,ag:'dado'});
+  else S.dadoChat.push({role:'assistant',content:res.text,ag:'dado'});
+  save();drawDadoChat();say('dado','Dados processados.');aiBusy=false;
+}
+
+// Iris
+function drawIrisChat(){const l=$('#cl3');if(!l)return;const pb='<b style="color:#ffd24a">Iris:</b> ';l.innerHTML='<p>'+pb+'Como vamos chegar aos $5B?</p>'+(S.irisChat||[]).map(m=>m.role==='user'?`<p><b>${esc(m.who||'Você')}:</b> ${esc(m.content)}</p>`:`<p>${pb}${esc(m.content)||'...'}</p>`).join('');l.scrollTop=1e5;}
+function openIrisChat(){$('#cc').innerHTML=`<div class="pn"><h2>Iris · CEO Advisor</h2><div><div class="chat" id="cl3"></div><form id="firis" onsubmit="event.preventDefault(); askIris();"><input type="text" id="ciris" placeholder="Pergunta estratégica..."><button type="button" class="go" onclick="askIris()">Enviar</button></form><button type="button" class="sm" onclick="document.getElementById('cc').hidden=true">Fechar</button></div></div>`;$('#cc').hidden=false;drawIrisChat();$('#ciris').focus();}
+
+async function askIris(){
+  const i=$('#ciris'),q=i.value.trim();if(!q||aiBusy)return;i.value='';if(!S.irisChat)S.irisChat=[];
+  S.irisChat.push({role:'user',content:q,who:boss.n,t:Date.now(),ag:'iris'});save();drawIrisChat();
+  aiBusy=true;const temp={role:'assistant',content:'...',ag:'iris',temp:true};S.irisChat.push(temp);drawIrisChat();
+
+  const sysPrompt = `Você é a Iris, CEO Advisor da Fineline 3D. Sua obsessão é construir um negócio de $5B+. Pense como um founder experiente em scaling e valuation. Seja estratégica e questione o status quo.`;
+  const res = await callAI('iris', sysPrompt, S.irisChat.filter(m=>!m.temp));
+
+  S.irisChat=S.irisChat.filter(m=>m!==temp);
+  if (res.sim) S.irisChat.push({role:'assistant',content:mockIrisResponse(q),ag:'iris'});
+  else if (res.error) S.irisChat.push({role:'assistant',content:'⚠️ '+res.error,ag:'iris'});
+  else S.irisChat.push({role:'assistant',content:res.text,ag:'iris'});
+  save();drawIrisChat();aiBusy=false;
+}
+
+// Scout
+function drawScoutChat(){const l=$('#cl4');if(!l)return;const pb='<b style="color:#ff5a5a">Scout:</b> ';l.innerHTML='<p>'+pb+'Qual nicho vamos dominar?</p>'+(S.scoutChat||[]).map(m=>m.role==='user'?`<p><b>${esc(m.who||'Você')}:</b> ${esc(m.content)}</p>`:`<p>${pb}${esc(m.content)||'...'}</p>`).join('');l.scrollTop=1e5;}
+function openScoutChat(){$('#cc').innerHTML=`<div class="pn"><h2>Scout · Mercado</h2><div><div class="chat" id="cl4"></div><form id="fscout" onsubmit="event.preventDefault(); askScout();"><input type="text" id="cscout" placeholder="Pesquise tendências..."><button type="button" class="go" onclick="askScout()">Enviar</button></form><button type="button" class="sm" onclick="document.getElementById('cc').hidden=true">Fechar</button></div></div>`;$('#cc').hidden=false;drawScoutChat();$('#cscout').focus();}
+
+async function askScout(){
+  const i=$('#cscout'),q=i.value.trim();if(!q||aiBusy)return;i.value='';if(!S.scoutChat)S.scoutChat=[];
+  S.scoutChat.push({role:'user',content:q,who:boss.n,t:Date.now(),ag:'scout'});save();drawScoutChat();
+  aiBusy=true;const temp={role:'assistant',content:'...',ag:'scout',temp:true};S.scoutChat.push(temp);drawScoutChat();
+
+  const sysPrompt = `Você é o Scout, pesquisador de mercado da Fineline 3D. Seu foco é encontrar nichos lucrativos, analisar concorrentes e identificar tendências de impressão 3D no Brasil. Seja prático.`;
+  const res = await callAI('scout', sysPrompt, S.scoutChat.filter(m=>!m.temp));
+
+  S.scoutChat=S.scoutChat.filter(m=>m!==temp);
+  if (res.sim) S.scoutChat.push({role:'assistant',content:mockScoutResponse(q),ag:'scout'});
+  else if (res.error) S.scoutChat.push({role:'assistant',content:'⚠️ '+res.error,ag:'scout'});
+  else S.scoutChat.push({role:'assistant',content:res.text,ag:'scout'});
+  save();drawScoutChat();aiBusy=false;
+}
+
+// =========================================
+// FUNÇÕES AUXILIARES (MOCK)
+// =========================================
+const rnd = arr => arr[Math.floor(Math.random() * arr.length)];
+function mockPrinterResponse(msg){const m=msg.toLowerCase();if(m.includes('aderência')||m.includes('descolando'))return rnd(["Para a K1 Max, limpe a mesa PEI com álcool isopropílico e aumente a mesa para 65°C. Na A1 Combo, use 60°C e reduza a primeira camada para 30mm/s.","Problema de aderência? Verifique a distância do bico (Z-offset). Seque o filamento (PLA úmido não gruda)."]);if(m.includes('petg'))return rnd(["PETG: Bico em 240°C e Mesa em 80°C. Na A1 Combo, cuidado com o AMS (o PETG quebra fácil).","O PETG exige bico a 230-245°C. Se estiver gerando muitos fios, aumente a retração em 1.5mm."]);return rnd(["Entendi! Sobre isso, eu recomendaria verificar o manual da máquina ou fatiar um modelo de teste (Benchy) para calibrar.","Não tenho certeza sobre essa configuração específica. Podemos consultar a documentação da Creality ou Bambu Lab?"]);}
+function mockCrisResponse(msg){const m=msg.toLowerCase();if(m.includes('anúncio')||m.includes('ads'))return rnd(["Para estruturar o Google Ads, precisamos separar em Campanhas de Pesquisa e Display. Qual o seu orçamento mensal?","Sua campanha deve focar em palavras-chave de cauda longa. Evite palavras genéricas que gastam muito."]);return rnd(["Chefe, precisamos focar em conversão. O funil atual está gerando leads, mas a taxa de fechamento pode melhorar.","Entendi. Podemos usar o Google Workspace para organizar os leads. Vamos criar uma planilha no Sheets?"]);}
+function mockDadoResponse(msg){const m=msg.toLowerCase();const totalPecas=S.done.filter(j=>j.ok!==false).length;const totalLeads=S.leads.length;const naFila=S.jobs.length;const maqs=S.printers.filter(Boolean).length;if(m.includes('relatório')||m.includes('status'))return `RELATÓRIO: ${totalPecas} peças prontas, ${totalLeads} leads, ${naFila} na fila, ${maqs}/3 impressoras ativas.`;if(m.includes('shopee'))return "A integração com a Shopee requer um servidor backend (Vercel) para receber os Webhooks. Quer que eu prepare os requisitos técnicos?";return rnd(["Entendido. Processando os dados. O sistema aponta que a eficiência das máquinas está em 85%.","Para essa consulta, preciso de mais dados. O senhor pode lançar mais informações no CRM?"]);}
+function mockIrisResponse(msg){const m=msg.toLowerCase();if(m.includes('tam')||m.includes('mercado'))return rnd(["O TAM de impressão 3D sob demanda no Brasil é gigante, mas o nosso nicho deve ser focado em B2B.","Para escalar aos $5B, não podemos ser apenas um serviço de impressão. Precisamos criar um software (SaaS)."]);return rnd(["Chefe, olhar apenas para a operação diária é um erro. Precisamos pensar no valuation da empresa.","A estratégia de crescer apenas com vendas locais é lenta. Sugiro explorar a venda de modelos digitais (STL)."]);}
+function mockScoutResponse(msg){const m=msg.toLowerCase();if(m.includes('nicho')||m.includes('vender')||m.includes('opções')||m.includes('destacar'))return rnd(["Para se destacar, foque no nicho de Cosplay e Props. É um mercado apaixonado que paga caro por peças grandes.","Se você quer fugir da concorrência de brinquedos baratos, invista em peças técnicas para indústria local."]);return rnd(["Boa pergunta. Para respondermos isso com precisão, eu precisaria de dados reais de busca do Google Trends.","Não tenho essa informação exata agora, chefe. Sugiro analisarmos as palavras mais buscadas no Google Ads."]);}
+
+// =========================================
+function portrait(e){const c=$('#pf');if(!c)return;const g=c.getContext('2d'),L=e.look,r=(a,b,w,h,k)=>{g.fillStyle=k;g.fillRect(a,b,w,h)};r(0,0,40,44,'#123049');r(5,30,30,14,'#111');r(6,31,28,13,L.s);r(9,5,22,24,'#111');r(10,6,20,22,L.k);r(10,5,20,8,L.h);r(9,8,2,11,L.h);r(29,8,2,11,L.h);r(14,17,4,4,'#222');r(23,17,4,4,'#222');r(17,24,7,1,'#a0522d')}
+function stats(){const el=$('#chips');if(!el)return;const c=(k,t)=>`<span class="ch"><i style="background:${k}"></i>${t}</span>`;el.innerHTML=c('#e8a21c',S.jobs.length+busy()+' impressões')+c('#e0527a',S.leads.length+' leads')+c('#3fbf63',S.done.filter(j=>j.ok!==false).length+' peças')}
+const hm=t=>{const d=new Date(t);return d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})};
+const dur=ms=>{const m=Math.max(0,Math.ceil(ms/60000)),h=Math.floor(m/60);return h?`${h} h ${m%60} min`:`${m} min`};
+const TQ=[];let armed=-1;
+function toast(t){TQ.push(t);const e=$('#tt');e.innerHTML=`<span>${TQ.map(s=>esc(s)).join('<br>')}</span><button class="sm" onclick="TQ.length=0;document.getElementById('tt').hidden=true">OK</button>`;e.hidden=false}
+function prs(){const el=$('#prs');if(!el)return;el.innerHTML=S.printers.map((j,i)=>`<div class="row"><b>${PRN[i]}</b><span id="pt${i}">${j?'':'livre'}</span>${j?`<button class="sm" onclick="armed===${i}?failJob(${i}):(armed=${i},prs())">${armed===i?'Confirmar':'Falhou'}</button>`:''}</div>${j?`<div class="row"><span>${esc(j.name)} · ${j.g} g</span><i class="bar"><u id="pg${i}"></u></i></div>`:''}`).join('');upd()}
+function upd(){S.printers.forEach((j,i)=>{if(!j)return;const t=$('#pt'+i),g=$('#pg'+i);if(!t||!g)return;const n=Date.now();g.style.width=Math.min(100,Math.round((n-j.start)/(j.end-j.start)*100))+'%';t.textContent=`faltam ${dur(j.end-n)}`})}
+function failJob(i){const j=S.printers[i];if(!j)return;S.done.push({...j,ok:false,fin:Date.now()});S.printers[i]=null;say('printo',`Falha registrada: ${j.name}.`);save();dyn();info()}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)tick()});addEventListener('focus',tick);
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+
+S.crew.forEach(addCrew);if(S.me)applyMe();
+tabs();pst();fillBiz();dyn();info();stats();if(S.me)say('printo','Hotel Fineline aberto. Bem-vindo!');else openCC('me');
+setInterval(tick,1000);requestAnimationFrame(frame);
+</script>
+</body>
+</html>
